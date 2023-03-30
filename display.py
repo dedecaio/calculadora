@@ -1,5 +1,6 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QLineEdit
+from variables import BIG_FONT_SIZE, MINIMUM_WIDTH, TEXT_MARGIN
 
 
 class Display(QLineEdit):
@@ -8,8 +9,9 @@ class Display(QLineEdit):
         self.configStyle()
 
     def configStyle(self):
-        self.setStyleSheet('font-size: 40px;')
-        self.setMinimumHeight(80)
-        self.setMinimumWidth(400)
+        margins = [TEXT_MARGIN for _ in range(4)]
+        self.setStyleSheet(f'font-size: {BIG_FONT_SIZE}px;')
+        self.setMinimumHeight(BIG_FONT_SIZE * 2)
+        self.setMinimumWidth(MINIMUM_WIDTH)
         self.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.setTextMargins(15, 15, 15, 15)
+        self.setTextMargins(*margins)

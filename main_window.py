@@ -12,10 +12,11 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.cw)
 
         self.setWindowTitle('Calculadora')
+        self.setStyleSheet('background: #0d1117; color: white;')
 
     def adjustFixedSize(self):
         self.adjustSize()
         self.setFixedSize(self.width(), self.height())
 
-    def addToVLayout(self, widget: QWidget):
+    def addWidgetToVLayout(self, widget: QWidget):
         self.vLayout.addWidget(widget)
