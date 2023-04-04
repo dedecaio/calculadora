@@ -1,10 +1,14 @@
 from PySide6.QtWidgets import QGridLayout, QPushButton
+
 from typing import TYPE_CHECKING
 import math
 
 if TYPE_CHECKING:
     from info import Info
     from display import Display
+    from main_window import MainWindow
+
+
 from utils import isEmpty, isNumOrDot, isValidNumber
 from PySide6.QtCore import Slot
 from variables import MEDIUM_FONT_SIZE, PRIMARY_COLOR
@@ -23,8 +27,8 @@ class Button(QPushButton):
 
 
 class ButtonsGrid(QGridLayout):
-    def __init__(self, display: 'Display', info: 'Info', *args, **kwargs
-                 ) -> None:
+    def __init__(self, display: 'Display', info: 'Info', window: 'MainWindow',
+                 *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         self._gridMask = [
@@ -36,6 +40,7 @@ class ButtonsGrid(QGridLayout):
         ]
         self.display = display
         self.info = info
+        self.window = window
         self._equation = ''
         self._left = None
         self._right = None
@@ -115,6 +120,7 @@ class ButtonsGrid(QGridLayout):
         self.display.clear()
 
         if not isValidNumber(displayText) and self._left is None:
+            self._showError('Você não digitou nada.')
             return
 
         if self._left is None:
@@ -127,7 +133,7 @@ class ButtonsGrid(QGridLayout):
         displayText = self.display.text()
 
         if not isValidNumber(displayText):
-            print('Sem nada para a direita')
+            self._showError('Conta incompleta.')
             return
 
         self._right = float(displayText)
@@ -141,7 +147,7 @@ class ButtonsGrid(QGridLayout):
         except ZeroDivisionError:
             result = '0'
         except OverflowError:
-            print('número muito grande')
+            self._showError('Não tankei a conta, grande demais.')
 
         self.display.clear()
         self.info.setText(f'{self.equation} = {result}')
@@ -149,3 +155,17 @@ class ButtonsGrid(QGridLayout):
         self._right = None
         if result == 'error':
             self._left = None
+
+    def _showError(self, text):
+        msgBox = self.window.makeMsgBox()
+        msgBox.setText(text)
+        msgBox.setIcon(msgBox.Icon.Warning)
+
+        msgBox.setStandardButtons(
+            msgBox.StandardButton.Ok
+        )
+        msgBox.button(msgBox.StandardButton.Ok).setText('Belê')
+        msgBox.button(msgBox.StandardButton.Ok).setStyleSheet(
+            'background: #1e81b0')
+
+        msgBox.exec()
